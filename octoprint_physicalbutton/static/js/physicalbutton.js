@@ -63,6 +63,10 @@ $(function() {
             if (self.buttons().find(b => b.gpio() == item))
                 return true;
 
+            //disable used LEDs
+            if (self.buttons().find(b => b.ledgpio() == item))
+                return true;
+
             //disable used output gpios
             if (self.buttons().find(b => b.activities().find(a => a.type() == 'output' && a.execute.gpio() == item)))
                 return true;
@@ -73,6 +77,10 @@ $(function() {
         self.disableGpioOutputOption = function(item){
             if (item == 'none')
                 return false;
+
+            //disable used LEDs
+            if (self.buttons().find(b => b.ledgpio() == item))
+                return true;
 
             //disable used input gpios
             if (self.buttons().find(b => b.gpio() == item))
@@ -88,6 +96,7 @@ $(function() {
                 buttonMode: ko.observable('Normally Open (NO)'),
                 buttonName: ko.observable('New Button Name'),
                 gpio: ko.observable('none'),
+                ledgpio: ko.observable('none'),
                 buttonTime: ko.observable('500'),
                 id: ko.observable(Date.now())
             });
