@@ -117,6 +117,7 @@ $(function() {
             updatedItem.activities.push({
                 type: ko.observable('action'),
                 identifier: ko.observable('New Action'),
+                triggerwhen: ko.observable('Always'),
                 execute: ko.observable('none')
             });
             self.selectedActivity(this.activities()[this.activities().length - 1]);
@@ -130,6 +131,7 @@ $(function() {
             updatedItem.activities.push({
                 type: ko.observable('gcode'),
                 identifier: ko.observable('New GCODE'),
+                triggerwhen: ko.observable('Always'),
                 execute: ko.observable('')
             });
             self.selectedActivity(this.activities()[this.activities().length - 1]);
@@ -143,6 +145,7 @@ $(function() {
             updatedItem.activities.push({
                 type: ko.observable('system'),
                 identifier: ko.observable('New System Command'),
+                triggerwhen: ko.observable('Always'),
                 execute: ko.observable('')
             });
             self.selectedActivity(this.activities()[this.activities().length - 1]);
@@ -156,6 +159,7 @@ $(function() {
             updatedItem.activities.push({
                 type: ko.observable('file'),
                 identifier: ko.observable('New File'),
+                triggerwhen: ko.observable('Always'),
                 execute: ko.observable('')
             });
             self.selectedActivity(this.activities()[this.activities().length - 1]);
@@ -169,6 +173,7 @@ $(function() {
             updatedItem.activities.push({
                 type: ko.observable('output'),
                 identifier: ko.observable('New Output'),
+                triggerwhen: ko.observable('Always'),
                 execute: {
                     gpio: ko.observable('none'),
                     value: ko.observable('HIGH'),
