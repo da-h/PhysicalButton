@@ -9,6 +9,7 @@ import time
 import threading
 import subprocess
 
+shiftButton = None
 buttonList = []
 ledDict = {}
 outputList = []
@@ -26,7 +27,7 @@ class PhysicalbuttonPlugin(octoprint.plugin.AssetPlugin,
     ########################################_GPIO Setup functions_####################################
     ##################################################################################################
     def setupButtons(self):
-        global buttonList, ledDict
+        global buttonList, ledDict, shiftButton
         for button in self._settings.get(["buttons"]):
             if button.get('gpio') == "none":
                 continue
@@ -38,6 +39,11 @@ class PhysicalbuttonPlugin(octoprint.plugin.AssetPlugin,
                 newButton.when_pressed = self.reactToInput
             if buttonMode == "Normally Closed (NC)":
                 newButton.when_released = self.reactToInput
+            if buttonType == "Shift Button":
+                if shiftButton is None:
+                    shiftButton = newButton
+                else:
+                    self._logger.error(f"Cannot use multiple shift buttons.")
             if button.get('ledgpio') != "none":
                 s = button.get('ledgpio')
                 buttonLED = int(button.get('ledgpio'))
@@ -107,6 +113,10 @@ class PhysicalbuttonPlugin(octoprint.plugin.AssetPlugin,
                 button = btn
                 break
 
+        shift_pressed = shiftButton is not None and shiftButton.is_pressed
+        if shift_pressed:
+            self._logger.debug(f"Shift button is pressed.")
+
         waitTime = int(button.get('buttonTime'))
         time.sleep(waitTime/1000)
 
@@ -115,6 +125,11 @@ class PhysicalbuttonPlugin(octoprint.plugin.AssetPlugin,
             #execute actions for button in order
             for activity in button.get('activities'):
                 exitCode = 0
+
+                # skip if triggerwhen-value is not met
+                if activity.get("triggerwhen") == "Shift-Pressed" and not shift_pressed or activity.get("triggerwhen") == "Shift-Not-Pressed" and shift_pressed:
+                    self._logger.debug(f"Skipping action due to triggerwhen='{activity.get('triggerwhen')}' but shift-value is '{shift_pressed}'.")
+
                 self._logger.debug(f"Sending activity with identifier '{activity.get('identifier')}' ...")
                 if activity.get('type') == "action":
                     #send specified action
